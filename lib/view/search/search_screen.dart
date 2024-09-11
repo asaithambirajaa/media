@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:media_app/res/AppContextExtension.dart';
 import 'package:media_app/view/search/widgets/paramter_selector.dart';
 
-
 import '../../res/Resources.dart';
 import '../shared/text_view.dart';
 import 'widgets/search_field.dart';
 import 'widgets/submit_button.dart';
 
-class SearchScreen extends StatelessWidget {
-  static const String id = "search_screen";
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  String typingTxt = "";
+  @override
   Widget build(BuildContext context) {
     final resources = context.resources;
-
     return Scaffold(
       backgroundColor: resources.color.primaryColor,
       body: SafeArea(
@@ -31,13 +34,19 @@ class SearchScreen extends StatelessWidget {
                 const SizedBox(height: 60),
                 _buildDescriptionText(resources),
                 const SizedBox(height: 40),
-                const SearchField(),
+                SearchField(
+                  onChanged: (val) {
+                    setState(() {
+                      typingTxt = val;
+                    });
+                  },
+                ),
                 const SizedBox(height: 40),
                 _buildParameterText(resources),
                 const SizedBox(height: 40),
                 const ParameterSelector(),
                 const SizedBox(height: 40),
-                SubmitButton(resources: resources),
+                SubmitButton(resources: resources, typingTxt: typingTxt),
               ],
             ),
           ),
@@ -80,6 +89,4 @@ class SearchScreen extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
   }
-
 }
-

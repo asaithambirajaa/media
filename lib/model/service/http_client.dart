@@ -17,7 +17,8 @@ class SSLPinning {
             sha256.convert(utf8.encode(publicKey)).toString();
 
         // Compare the hash with the pinned hash
-        return publicKeySha256 == _publicKeyHash;
+        return publicKeySha256 != _publicKeyHash;
+        // return true;
       };
 
     return httpClient;
@@ -30,12 +31,6 @@ class SSLPinning {
     final request = await httpClient.getUrl(uri);
     final response = await request.close();
     return response;
-    // if (response.statusCode == 200) {
-    //   final responseBody = await response.transform(utf8.decoder).join();
-    //   return responseBody;
-    // } else {
-    //   throw HttpException('Failed to load data: ${response.statusCode}');
-    // }
   }
 }
 

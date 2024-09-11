@@ -2,88 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:media_app/coordinator/app_coordinator.dart';
 import 'package:media_app/res/Resources.dart';
+import 'package:media_app/res/utils.dart';
 import 'package:media_app/view/shared/text_view.dart';
 import 'package:media_app/view_model/cubit/search_cubit.dart';
 import 'package:media_app/view_model/cubit/search_state.dart';
-import 'package:media_app/view_model/query_view_model.dart';
 
 class SubmitButton extends StatelessWidget {
   final Resources resources;
+  final String typingTxt;
 
-  const SubmitButton({super.key, required this.resources});
+  const SubmitButton(
+      {super.key, required this.resources, required this.typingTxt});
 
   @override
   Widget build(BuildContext context) {
-    final query = QueryInheritedWidget.of(context);
     final coordi = AppCoordinator(context);
-    return BlocListener<SearchCubit, SearchState>(
+    return BlocConsumer<SearchCubit, SearchState>(
       listener: (context, state) {
-        if (state is NoConnectivity) {
-          _showError(context, 'No internet connection.');
-        }
-        if (state is SearchErrorState) {
-          _showError(context, state.msg);
-        } else if (state is SearchLoadedState) {
-          coordi.navigateTo(state.searchResult);
-        }
+        // if (state is NoConnectivity) {
+        //   AppUtils.showError(context, 'No internet connection.');
+        // }
+        // if (state is SearchErrorState) {
+        //   AppUtils.showError(context, state.msg);
+        // } else if (state is SearchLoadedState) {
+        //   coordi.navigateTo(state.searchResult);
+        // }
       },
-      child: SizedBox(
-        width: double.maxFinite,
-        height: resources.dimension.buttonHeight,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: resources.color.buttonColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
+      builder: (context, state) {
+        if (state is SearchLoadingState) {
+          return _buildLoadingIndicator();
+        }
+        return SizedBox(
+          width: double.maxFinite,
+          height: resources.dimension.buttonHeight,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: resources.color.buttonColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            ),
+            onPressed: () => _handleSubmit(typingTxt, context),
+            child: const MyTextView(
+              label: "Submit",
+              fontWeight: FontWeight.bold,
             ),
           ),
-          onPressed:
-              /* searchState.loading
-                ? null
-                : */
-              () => _handleSubmit(query == null ? "lio" : query.query, context),
-          child:
-              /* searchState.loading
-                ? _buildLoadingIndicator()
-                :  */
-              const MyTextView(
-            label: "Submit",
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
-  _showError(BuildContext context, String txt) {
-    ScaffoldMessenger.of(context).showSnackBar(
-       SnackBar(
-        content: Text(
-          txt,
-          style: const TextStyle(color: Colors.white), // Text color
-        ),
-        backgroundColor: Colors.redAccent, // Background color
-        behavior:
-            SnackBarBehavior.floating, // Optional: make the SnackBar float
-      ),
+        );
+      },
     );
   }
 
   void _handleSubmit(String query, BuildContext context) {
     if (query.trim().isNotEmpty) {
-      context.read<SearchCubit>().fetchData("lio");
+      context.read<SearchCubit>().fetchData(query);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please enter a search query',
-            style: TextStyle(color: Colors.white), // Text color
-          ),
-          backgroundColor: Colors.redAccent, // Background color
-          behavior:
-              SnackBarBehavior.floating, // Optional: make the SnackBar float
-        ),
-      );
+      AppUtils.showError(context, 'Please enter a search query');
     }
   }
 

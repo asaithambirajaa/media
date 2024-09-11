@@ -31,9 +31,9 @@ class _DetectionPageState extends State<DetectionPage> {
           backgroundColor: resources.color.primaryColor,
           title: const MyTextView(label: 'Detection')),
       body: BlocConsumer<DetectionCubit, DetectionState>(
-        buildWhen: (previous, current) {
-          if (current is DetectionLoadedState) {
-            if (current.rootedCheck || current.devMode || current.jailbreak) {
+        buildWhen: (previous, state) {
+          if (state is DetectionLoadedState) {
+            if (state.rootedCheck || state.devMode || state.jailbreak) {
               return true;
             }
             return false;
@@ -70,7 +70,8 @@ class _DetectionPageState extends State<DetectionPage> {
         },
         listener: (context, state) {
           if (state is DetectionLoadedState) {
-            if (!state.rootedCheck) {
+            if (!state.rootedCheck /* && !state.devMode */ &&
+                !state.jailbreak) {
               Navigator.of(context)
                   .pushReplacementNamed(route.Route.kSEARCH_PAGE);
             }
@@ -95,8 +96,8 @@ class _DetectionPageState extends State<DetectionPage> {
         const SizedBox(height: 10),
         MyTextView(
           label: isRootDevice || isJailbreak
-              ? 'This app cannot be used on rooted devices.'
-              : "Can you please disable developer mode",
+              ? 'This app wont work on unsecure devices.'
+              : "To disable Developer Mode on your device, navigate to Settings > Developer Options, then toggle off the switch.",
           fontWeight: FontWeight.bold,
           fontSize: context.resources.dimension.smallText,
         ),
@@ -108,31 +109,3 @@ class _DetectionPageState extends State<DetectionPage> {
     return Container();
   }
 }
-
-/*class RootDetectionApp extends StatefulWidget {
-  const RootDetectionApp({super.key});
-
-  @override
-  _RootDetectionAppState createState() => _RootDetectionAppState();
-}
-
- class _RootDetectionAppState extends State<RootDetectionApp> {
-  @override
-  void initState() {
-    super.initState();
-    // Perform root check on app start
-    /*  ref.read(rootDetectionProvider.notifier).checkRootStatus().then((_) {
-      final rootState = ref.read(rootDetectionProvider);
-      if (!rootState.rootedCheck) {
-        Navigator.of(context).pushReplacementNamed(SearchScreen.id);
-      }
-    }); */
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: RootDetectionScreen(),
-    );
-  }
-} */

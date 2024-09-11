@@ -4,6 +4,7 @@ import 'package:media_app/model/repository/search_repository.dart';
 import 'package:media_app/model/service/detection_service.dart';
 import 'package:media_app/view_model/cubit/root_detection_cubit.dart';
 import 'package:media_app/view_model/cubit/search_cubit.dart';
+import 'package:media_app/view_model/media_selection_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -18,4 +19,5 @@ Future<void> init() async {
   sl.registerLazySingleton<SearchMediaRepository>(
       () => SearchMediaRepository());
   sl.registerFactory<SearchCubit>(() => SearchCubit(sl(), sl()));
+  sl.registerFactory<MediaSelectionCubit>(() => MediaSelectionCubit());
 }

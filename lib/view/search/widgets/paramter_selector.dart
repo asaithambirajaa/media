@@ -7,7 +7,6 @@ class ParameterSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final mediaModel = ref.watch(mediaViewModelProvider);
     List<String> mediaTypes = [
       'movie',
       'podcast',
@@ -20,7 +19,9 @@ class ParameterSelector extends StatelessWidget {
       'ebook',
     ];
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(route.Route.kMEDIA_PAGE),
+      onTap: () {
+        Navigator.of(context).pushNamed(route.Route.kMEDIA_PAGE);
+      },
       child: Container(
         width: double.maxFinite,
         height: context.resources.screenHeight * 0.15,
