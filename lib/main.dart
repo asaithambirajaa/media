@@ -7,7 +7,7 @@ import 'package:media_app/view/search_result/search_result_screen.dart';
 import 'package:media_app/view_model/cubit/root_detection_cubit.dart';
 import 'package:media_app/view_model/cubit/search_cubit.dart';
 
-import 'view/root_detection/root_detection_screen.dart';
+import 'view/detection/detection_screen.dart';
 import 'injection_container.dart' as di;
 
 void main() async {

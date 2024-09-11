@@ -29,11 +29,11 @@ class _DetectionPageState extends State<DetectionPage> {
       backgroundColor: resources.color.primaryColor,
       appBar: AppBar(
           backgroundColor: resources.color.primaryColor,
-          title: const MyTextView(label: 'Root Detection')),
+          title: const MyTextView(label: 'Detection')),
       body: BlocConsumer<DetectionCubit, DetectionState>(
         buildWhen: (previous, current) {
           if (current is DetectionLoadedState) {
-            if (current.rootedCheck) {
+            if (current.rootedCheck || current.devMode || current.jailbreak) {
               return true;
             }
             return false;
@@ -43,7 +43,9 @@ class _DetectionPageState extends State<DetectionPage> {
         },
         listenWhen: (previous, current) {
           if (current is DetectionLoadedState) {
-            if (!current.rootedCheck) {
+            if (!current.rootedCheck ||
+                !current.devMode ||
+                !current.jailbreak) {
               return true;
             }
             return false;
@@ -58,8 +60,9 @@ class _DetectionPageState extends State<DetectionPage> {
             );
           } else if (state is DetectionLoadedState) {
             return Center(
-              child: state.rootedCheck
-                  ? _buildRootedContent(context)
+              child: state.rootedCheck || state.devMode || state.jailbreak
+                  ? _buildRootedContent(
+                      context, state.rootedCheck, state.jailbreak)
                   : _buildNotRootedContent(context),
             );
           }
@@ -77,7 +80,8 @@ class _DetectionPageState extends State<DetectionPage> {
     );
   }
 
-  Widget _buildRootedContent(BuildContext context) {
+  Widget _buildRootedContent(
+      BuildContext context, bool isRootDevice, bool isJailbreak) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -90,7 +94,9 @@ class _DetectionPageState extends State<DetectionPage> {
         ),
         const SizedBox(height: 10),
         MyTextView(
-          label: 'This app cannot be used on rooted devices.',
+          label: isRootDevice || isJailbreak
+              ? 'This app cannot be used on rooted devices.'
+              : "Can you please disable developer mode",
           fontWeight: FontWeight.bold,
           fontSize: context.resources.dimension.smallText,
         ),
